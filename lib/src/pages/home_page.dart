@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_widget/src/providers/menu_provider.dart';
 
 class HomePage extends StatelessWidget {
   @override
@@ -14,17 +15,42 @@ class HomePage extends StatelessWidget {
   }
 
   Widget _list() {
-    return ListView(
-      children: _listItems(),
+    //cuando no futuro retorna vacio ya que al iniciar aun no carga el json
+    // print(menuProvider.options);
+
+    //option para cargar data no recomendable es lenta
+    // menuProvider.loadData().then((options) {
+    //   print('_list');
+    //   print(options);
+    // });
+
+    return FutureBuilder(
+      future: menuProvider.loadData(), //retorna Future
+      initialData: [],
+      builder: (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
+        return ListView(
+          children: _listItems(snapshot.data),
+        );
+      },
     );
   }
 
-  List<Widget> _listItems() {
-     return [
-       ListTile(
-         title:Text('Hi world'),
-       )
+  List<Widget> _listItems(List<dynamic> data) {
+    final List<Widget> options = [];
 
-     ];
-   }
+    data.forEach((element) {
+      final widgetTemp = ListTile(
+        title: Text(element['texto']),
+        leading: Icon(Icons.account_circle, color: Colors.blue),
+        trailing: Icon(Icons.keyboard_arrow_right, color: Colors.blue),
+        onTap: () {},
+      );
+
+      options
+        ..add(widgetTemp)
+        ..add(Divider());
+    });
+
+    return options;
+  }
 }
