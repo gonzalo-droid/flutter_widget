@@ -58,21 +58,37 @@ class _ListViewPageState extends State<ListViewPage> {
   }
 
   Widget _createdList() {
-    return ListView.builder(
-      controller: _scrollController,
-      itemCount: _listNumbers.length,
-      itemBuilder: (BuildContext context, int index) {
-        final image = _listNumbers[index];
+    return RefreshIndicator(
+        onRefresh: getPage1,
 
-        //para el loading
-        return FadeInImage(
-          image: NetworkImage('https://picsum.photos/500/300/?image=$image'),
-          placeholder: AssetImage('assets/jar-loading.gif'),
-          height: 250.0, // static height
-          fit: BoxFit.cover, //se ajuste al contr
-        );
-      },
+        child: ListView.builder(
+        controller: _scrollController,
+        itemCount: _listNumbers.length,
+        itemBuilder: (BuildContext context, int index) {
+          final image = _listNumbers[index];
+
+          //para el loading
+          return FadeInImage(
+            image: NetworkImage('https://picsum.photos/500/300/?image=$image'),
+            placeholder: AssetImage('assets/jar-loading.gif'),
+            height: 250.0, // static height
+            fit: BoxFit.cover, //se ajuste al contr
+          );
+        },
+      ),
     );
+  }
+
+  Future<Null> getPage1() async{
+    final duration = new Duration(seconds: 2);
+    new Timer(duration, (){
+
+      _listNumbers.clear(); //
+      _lastItem++;
+      _add10();
+    });
+
+    return Future.delayed(duration);
   }
 
   void _add10() {
